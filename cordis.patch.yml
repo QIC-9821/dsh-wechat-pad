@@ -1,0 +1,5 @@
+- insert:
+    - id: dsh-wechat-pad
+      name: 'dsh-wechat-pad'
+      config:
+        padUrl: ''
