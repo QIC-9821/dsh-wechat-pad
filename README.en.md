@@ -1,5 +1,10 @@
 # dsh-wechat-pad
 
+[![npm](https://img.shields.io/npm/v/dsh-wechat-pad.svg)](https://www.npmjs.com/package/dsh-wechat-pad)
+[![CI](https://github.com/QIC-9821/dsh-wechat-pad/actions/workflows/ci.yml/badge.svg)](https://github.com/QIC-9821/dsh-wechat-pad/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![experimental](https://img.shields.io/badge/status-experimental-orange.svg)](#safety)
+
 Bring your **personal WeChat** into [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness): answer DMs directly, speak in group chats only when mentioned.
 
 The plugin contains no WeChat protocol code. It talks to a **self-hosted iPad-protocol backend** (currently shaped after [WeChatPadPro](https://github.com/WeChatPadPro/WeChatPadPro)); the backend logs in and moves bytes, the plugin decides who is talking, whether to answer, which session to use, and how to reply.
@@ -41,8 +46,9 @@ It runs inside the DSH process and calls the host's session services directly â€
 ## Install
 
 ```bash
-dsh plugin add /path/to/dsh-wechat-pad   # local
-dsh plugin add dsh-wechat-pad            # once published
+dsh plugin add dsh-wechat-pad                              # npm
+dsh plugin add github:QIC-9821/dsh-wechat-pad#v0.1.0       # from GitHub
+dsh plugin add /path/to/dsh-wechat-pad                     # local checkout
 ```
 
 Enable `dsh-wechat-pad`, then open `http://127.0.0.1:<dsh-port>/wechat-pad`.

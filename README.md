@@ -1,5 +1,10 @@
 # dsh-wechat-pad
 
+[![npm](https://img.shields.io/npm/v/dsh-wechat-pad.svg)](https://www.npmjs.com/package/dsh-wechat-pad)
+[![CI](https://github.com/QIC-9821/dsh-wechat-pad/actions/workflows/ci.yml/badge.svg)](https://github.com/QIC-9821/dsh-wechat-pad/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![experimental](https://img.shields.io/badge/status-experimental-orange.svg)](#安全与边界)
+
 把**个人微信**接进 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)：私聊随手回，群里被 @ 才说话。
 
 它自己不含任何微信协议实现，而是连接一台**自建的 iPad 协议端**（目前适配 [WeChatPadPro](https://github.com/WeChatPadPro/WeChatPadPro) 的接口）。协议端负责登录、收发；本插件负责「谁在说、要不要答、交给哪个会话、怎么回」。
@@ -40,14 +45,17 @@
 
 ## 安装
 
-在 DSH 的 profile 里装（二选一）：
+在 DSH 的 profile 里装（三选一）：
 
 ```bash
+# npm（推荐）
+dsh plugin add dsh-wechat-pad
+
+# 直接从 GitHub tag 装
+dsh plugin add github:QIC-9821/dsh-wechat-pad#v0.1.0
+
 # 从本地目录装（开发时）
 dsh plugin add /path/to/dsh-wechat-pad
-
-# 或者发布到 npm 之后
-dsh plugin add dsh-wechat-pad
 ```
 
 装完在「设置 → 插件」里启用 `dsh-wechat-pad`（或直接写进 profile 的 bundles）。启用后打开 `http://127.0.0.1:<DSH 端口>/wechat-pad`。

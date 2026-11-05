@@ -1,7 +1,7 @@
 {
   "name": "dsh-wechat-pad",
   "version": "0.1.0",
-  "description": "把个人微信（经 iPad 协议端）接进 DeepSeek Harness：私聊随手回，群里被 @ 才说话。Connect WeChat to DSH through a self-hosted iPad-protocol backend.",
+  "description": "Connect personal WeChat, through a self-hosted iPad-protocol backend, to DeepSeek Harness: reply in DMs and speak in groups only when mentioned.",
   "type": "module",
   "license": "MIT",
   "main": "./index.js",
@@ -30,7 +30,9 @@
     "wechat",
     "weixin",
     "chatbot",
-    "im"
+    "im",
+    "experimental",
+    "unofficial"
   ],
   "engines": {
     "node": ">=22"
@@ -42,5 +44,18 @@
     "bundle": {
       "patch": "./cordis.patch.yml"
     }
+  },
+  "author": "QIC-9821",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/QIC-9821/dsh-wechat-pad.git"
+  },
+  "homepage": "https://github.com/QIC-9821/dsh-wechat-pad#readme",
+  "bugs": {
+    "url": "https://github.com/QIC-9821/dsh-wechat-pad/issues"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
   }
 }
