@@ -1,18 +1,20 @@
-{
+﻿{
   "name": "dsh-wechat-pad",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Connect personal WeChat, through a self-hosted iPad-protocol backend, to DeepSeek Harness: reply in DMs and speak in groups only when mentioned.",
   "type": "module",
   "license": "MIT",
   "main": "./index.js",
   "exports": {
     ".": "./index.js",
+    "./client": "./client.js",
     "./locale/*.json": "./locale/*.json",
     "./icon": "./icon.svg",
     "./package.json": "./package.json"
   },
   "files": [
     "index.js",
+    "client.js",
     "lib/",
     "cordis.patch.yml",
     "locale/*.json",
@@ -38,11 +40,18 @@
     "node": ">=22"
   },
   "scripts": {
-    "test": "node --test test/bridge.test.mjs test/e2e.test.mjs"
+    "test": "node --test test/bridge.test.mjs test/e2e.test.mjs test/settings.test.mjs"
   },
   "dsh": {
     "bundle": {
       "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-settings"
+      ]
     }
   },
   "author": "QIC-9821",

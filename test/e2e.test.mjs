@@ -36,6 +36,7 @@ test('端到端：假协议端 → webhook → 会话 → 回复', async () => {
     botNames: ['机器人'],
     groups: [{ id: 'group_e2e@chatroom', name: '联调群' }],
     queueLimit: 3,
+    coalesceMs: 0,
   }, {});
 
   const client = new PadClient(cfg, { logger: silent });

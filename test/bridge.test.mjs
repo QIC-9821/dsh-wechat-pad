@@ -38,6 +38,7 @@ async function setup({ config = {}, reply = '收到，早上好。' } = {}) {
     selfWxid: SELF,
     botNames: ['机器人'],
     groups: [{ id: 'group_a@chatroom', name: '测试群', trigger: 'mention' }],
+    coalesceMs: 0, // 单测里不合并，逐条断言
     ...config,
   }, {});
 
@@ -207,6 +208,22 @@ test('长回答按段落切分', async () => {
     assert.ok(env.sent.length > 1, '应该切成多条');
     const joined = env.sent.map((item) => item.text.replace(/^@小明 /, '')).join('');
     assert.ok(joined.length >= long.length * 0.9, `切成了 ${env.sent.length} 段，拼回来 ${joined.length} / ${long.length} 字`);
+  } finally {
+    await env.bridge.dispose();
+    await env.store.close();
+  }
+});
+
+test('同一个人连发几条，合并成一次 prompt', async () => {
+  const env = await setup({ config: { coalesceMs: 80 } });
+  try {
+    env.bridge.handlePayload(payload({ NewMsgId: 5001, Content: { string: '@机器人 在吗' } }));
+    env.bridge.handlePayload(payload({ NewMsgId: 5002, Content: { string: '帮我看个东西' } }));
+    env.bridge.handlePayload(payload({ NewMsgId: 5003, Content: { string: '是个报错' } }));
+    await tick(200);
+    assert.equal(env.prompts.length, 1, '三条短消息应该只跑一次');
+    assert.match(env.prompts[0].text, /在吗\n帮我看个东西\n是个报错/);
+    assert.equal(env.sent.length, 1, '只回一条');
   } finally {
     await env.bridge.dispose();
     await env.store.close();

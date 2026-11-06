@@ -6,6 +6,12 @@ import { configureWebhook, createDashboardHandler } from './lib/dashboard.js';
 import { createHarness } from './lib/harness.js';
 import { PadClient } from './lib/pad-client.js';
 import { Store } from './lib/store.js';
+import {
+  applySettings,
+  loadSettings,
+  saveSettings,
+  settingsSchemaForClient,
+} from './lib/settings.js';
 import { createHookHandler } from './lib/webhook.js';
 
 export const name = 'dsh-wechat-pad';
@@ -64,11 +70,48 @@ export async function apply(ctx, config = {}) {
     harnessError = error?.message ?? String(error);
   }
 
-  const bridge = harness
-    ? createBridge({ cfg, pad, store, harness, logger })
-    : { handlePayload: () => 0, dispose: async () => {}, pending: 0 };
+  // 运行时可换：面板上改设置后，用新配置重建 bridge，旧的一个个拆掉。
+  const loaded = await loadSettings(cfg.stateDir, logger);
+  const makeBridge = (nextCfg) => (harness
+    ? createBridge({ cfg: nextCfg, pad, store, harness, logger })
+    : { handlePayload: () => 0, dispose: async () => {}, pending: 0 });
 
-  const dashboard = createDashboardHandler({ cfg, pad, store, bridge, logger });
+  let runtime = {
+    cfg: applySettings(cfg, loaded.settings),
+    settings: loaded.settings,
+    settingsFile: loaded.file,
+    settingsSchema: settingsSchemaForClient(),
+    pad,
+    store,
+    bridge: makeBridge(applySettings(cfg, loaded.settings)),
+  };
+  const bridgeFacade = {
+    handlePayload: (payload) => runtime.bridge.handlePayload(payload),
+    handleMessage: (message) => runtime.bridge.handleMessage?.(message),
+    get pending() {
+      return runtime.bridge?.pending ?? 0;
+    },
+  };
+
+  const onSettings = async (patch) => {
+    const merged = { ...runtime.settings, ...(patch ?? {}) };
+    const saved = await saveSettings(cfg.stateDir, merged, logger);
+    const nextCfg = applySettings(cfg, saved);
+    const previous = runtime.bridge;
+    const nextBridge = makeBridge(nextCfg);
+    runtime = { ...runtime, cfg: nextCfg, settings: saved, bridge: nextBridge };
+    if (nextBridge !== previous) await previous.dispose?.().catch(() => undefined);
+    logger.info?.(
+      `[wechat-pad] 设置已应用：${saved.enabled ? '开' : '关'}，群聊 ${saved.groupMode}，合并 ${saved.coalesceMs}ms`,
+    );
+    return { settings: saved };
+  };
+
+  const dashboard = createDashboardHandler({
+    getRuntime: () => runtime,
+    onSettings,
+    logger,
+  });
   const disposers = [];
 
   // 面板：即使没配 padUrl 也挂上，方便看「还差什么」。
@@ -79,7 +122,7 @@ export async function apply(ctx, config = {}) {
   }
 
   if (isConfigured(cfg) && harness) {
-    const hook = createHookHandler({ cfg, bridge, store, logger });
+    const hook = createHookHandler({ cfg, bridge: bridgeFacade, store, logger });
     try {
       disposers.push(ctx.webServer.register({ kind: 'exact', path: cfg.hookPath, handler: hook }));
     } catch (error) {
@@ -119,7 +162,7 @@ export async function apply(ctx, config = {}) {
         // 忽略
       }
     }
-    await bridge.dispose?.();
+    await runtime.bridge?.dispose?.();
     await harness?.dispose?.();
     await store.close();
   };
