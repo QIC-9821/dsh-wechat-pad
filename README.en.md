@@ -11,6 +11,16 @@ The plugin contains no WeChat protocol code. It talks to a **self-hosted iPad-pr
 
 > ⚠️ Logging a personal WeChat account in through a third-party protocol **violates WeChat's terms** and can get the account banned (1 day → permanent). Use an account you are willing to lose. This project ships no backend, no accounts, and nothing that circumvents risk controls.
 
+## Demo
+
+The `/wechat-pad` control panel: whether the backend is reachable, whether the webhook is set, which groups are allowlisted, and counters for received / answered / skipped.
+
+![control panel](docs/dashboard.png)
+
+How one message travels from WeChat to a reply:
+
+![message flow](docs/flow.png)
+
 ## What it does
 
 - **DMs** — replies to whoever writes (can be disabled).

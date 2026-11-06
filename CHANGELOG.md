@@ -4,6 +4,19 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project uses
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.1] - 2026-11-06
+
+### Fixed
+
+- `package.json` was saved with a UTF-8 BOM, which made the host reject the
+  bundle: the entry stayed `missing`, `/wechat-pad` returned 404 and the
+  settings page never appeared. The BOM is gone and the file is plain UTF-8.
+
+### Added
+
+- README demo screenshots: the `/wechat-pad` control panel (connection, QR
+  login, group allowlist, counters) and the message-flow diagram.
+
 ## [0.1.0] - 2026-11-05
 
 First public release. **Experimental**: the plugin talks to a self-hosted,

@@ -1,6 +1,6 @@
-﻿{
+{
   "name": "dsh-wechat-pad",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Connect personal WeChat, through a self-hosted iPad-protocol backend, to DeepSeek Harness: reply in DMs and speak in groups only when mentioned.",
   "type": "module",
   "license": "MIT",
